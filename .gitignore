@@ -45,6 +45,7 @@ GoogleService-Info.plist
 *.jks
 *.p8
 *.p12
+*.pem
 paperkit_flutter/lib/core/constants/api_config.dart
 **/api_config.dart
 !**/api_config.dart.example

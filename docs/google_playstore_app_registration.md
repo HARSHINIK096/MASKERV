@@ -13,8 +13,8 @@ This document provides complete, authoritative store registration details, appli
 | **Package Name (`appId`)**| `com.maskerv.app` |
 | **Default Language** | `English (United States) [en-US]` |
 | **Supported Languages**| `English (en)`, `Spanish (es)`, `French (fr)`, `German (de)`, `Chinese (zh)`, `Japanese (ja)`, `Hindi (hi)` |
-| **Version Name** | `1.0.5` |
-| **Version Code** | `6` |
+| **Version Name** | `2.8.0` |
+| **Version Code** | `280` |
 | **Target SDK / Min SDK**| Target: `Android 14 / 15` (API Level 34/35) \| Min SDK: `Android 8.0` (API Level 26) |
 | **App Category** | `Productivity` / `Tools` (Secondary: `Education`) |
 | **Tags / Keywords** | `PDF Editor`, `Document Scanner`, `OCR`, `PDF Converter`, `Academic AI`, `PDF Merge`, `Bates Stamping`, `Encrypted Share` |
@@ -65,8 +65,8 @@ These permission declarations map directly to `AndroidManifest.xml` (`maskerv_fl
 | :--- | :--- | :--- |
 | `android.permission.INTERNET` | Required to communicate with the FastAPI backend service for AI research processing, online conversions, and cloud storage. | App Functionality |
 | `android.permission.ACCESS_NETWORK_STATE` | Used to check connectivity status and route lightweight PDF tasks to client-side edge WebAssembly/Syncfusion processing when offline. | App Functionality |
-| `android.permission.READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO` / `READ_MEDIA_AUDIO` | Required for users to pick images for scanning/conversion, videos for editing/frame extraction, and audio files. | Files & Docs, Photos & Videos |
-| `android.permission.READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` (Max SDK 32) | Required on older Android versions to load source files and export generated PDFs, DOCX, XLSX, and ZIP archives. | Files & Docs |
+| `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO` / `READ_MEDIA_AUDIO` | **REMOVED** (`tools:node="remove"`). The app uses system pickers (Android Photo Picker via `image_picker` and SAF via `file_picker`), which do not require broad storage access. | N/A (System Pickers used) |
+| `android.permission.READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` (Max SDK 32) | Required on older Android versions (API <= 32) to load source files and export generated PDFs, DOCX, XLSX, and ZIP archives. | Files & Docs |
 | `android.permission.CAMERA` | Required for the document scanner, camera OCR capture, and live QR/Barcode scanner features. | Photos & Videos (Scanner) |
 | `android.permission.USE_BIOMETRIC` / `USE_FINGERPRINT` | Optional permission used solely for Biometric App Lock screen security. | Authentication |
 

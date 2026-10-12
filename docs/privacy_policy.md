@@ -71,11 +71,9 @@ MASKERV requests only the minimum necessary device permissions required to perfo
 | :--- | :--- | :--- |
 | `android.permission.INTERNET` | Required to communicate with FastAPI backend for cloud AI, conversions, and secure shares. | Normal |
 | `android.permission.ACCESS_NETWORK_STATE` | Checks network availability to seamlessly switch to client-side offline WASM engines when offline. | Normal |
-| `android.permission.READ_MEDIA_IMAGES` | Allows you to select photos/images for document scanning, OCR, image conversion, and editing. | Dangerous |
-| `android.permission.READ_MEDIA_VIDEO` | Allows you to select video files for compression, frame extraction, and media editing. | Dangerous |
-| `android.permission.READ_MEDIA_AUDIO` | Allows you to select audio files for format conversion and voice podcast generation. | Dangerous |
-| `android.permission.READ_EXTERNAL_STORAGE` | (Android 12 and below) Legacy permission to pick source documents for processing. | Dangerous |
-| `android.permission.WRITE_EXTERNAL_STORAGE` | (Android 12 and below) Legacy permission to save converted PDFs, DOCX, and archives to device storage. | Dangerous |
+| `System Photo & File Pickers` | Uses Android Photo Picker and Storage Access Framework to select user-chosen files without requiring broad storage permissions. | Scoped Access |
+| `android.permission.READ_EXTERNAL_STORAGE` | (Android 12 and below, API <= 32) Legacy permission to pick source documents for processing. | Dangerous |
+| `android.permission.WRITE_EXTERNAL_STORAGE` | (Android 12 and below, API <= 32) Legacy permission to save converted PDFs, DOCX, and archives to device storage. | Dangerous |
 | `android.permission.CAMERA` | Enables live camera document scanning, camera OCR capture, and QR/Barcode scanning. | Dangerous |
 | `android.permission.USE_BIOMETRIC` / `USE_FINGERPRINT` | Optional permission used exclusively for local Biometric App Lock screen protection. | Normal |
 

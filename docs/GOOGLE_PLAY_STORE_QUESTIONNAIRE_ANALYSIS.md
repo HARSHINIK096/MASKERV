@@ -23,7 +23,7 @@ This document presents an exhaustive, evidence-based Google Play Console complia
    - **Files & Documents**: User-selected documents (PDF, DOCX, XLSX, images, audio, video) are processed locally via on-device WASM/Syncfusion engines or transiently sent to backend endpoints for AI/OCR tasks. Transient guest files auto-purge after 15 minutes (`Services/main.py:L39`).
    - **Data Encrypted in Transit**: **Yes** (HTTPS/TLS for all backend communications).
    - **Account Deletion**: **Not Applicable (No Accounts Exist)**. Users can reset their anonymous session ID (`resetAnonymousIdentity()`) or clear local temporary storage and processing history.
-4. **Permissions**: Granular media permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`), standard storage (`READ/WRITE_EXTERNAL_STORAGE` max API 32), `CAMERA` for scanner/OCR, and optional `USE_BIOMETRIC`/`USE_FINGERPRINT` for local App Lock.
+4. **Permissions & System Pickers**: In compliance with Google Play's Photo and Video Permissions policy, the application uses the system **Android Photo Picker** (`image_picker`) and Storage Access Framework (`file_picker`), with zero broad media storage permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO` are explicitly stripped via `tools:node="remove"`). Standard storage (`READ/WRITE_EXTERNAL_STORAGE`) is capped at `maxSdkVersion="32"`, `CAMERA` is used for scanner/OCR, and optional `USE_BIOMETRIC`/`USE_FINGERPRINT` for local App Lock.
 5. **AI Features**: Multimodal OCR, PDF summarization, research paper analysis, and quiz generation via backend proxy to Groq (LLaMA 3.3/Vision) and Google Gemini 3.6 Flash. API keys remain strictly server-side.
 
 ---
@@ -34,8 +34,8 @@ This document presents an exhaustive, evidence-based Google Play Console complia
 | :--- | :--- | :--- |
 | **App Title** | `MASKERV - AI Document & Workspace Studio` | [`docs/google_playstore_app_registration.md`](file:///o:/PaperKit/docs/google_playstore_app_registration.md#L11) |
 | **Package ID (`appId`)** | `com.maskerv.app` | [`maskerv_flutter/android/app/build.gradle`](file:///o:/PaperKit/maskerv_flutter/android/app/build.gradle) |
-| **Version Name** | `1.0.5` | [`maskerv_flutter/pubspec.yaml`](file:///o:/PaperKit/maskerv_flutter/pubspec.yaml#L19) |
-| **Version Code** | `6` | [`maskerv_flutter/pubspec.yaml`](file:///o:/PaperKit/maskerv_flutter/pubspec.yaml#L19) |
+| **Version Name** | `2.8.0` | [`maskerv_flutter/pubspec.yaml`](file:///o:/PaperKit/maskerv_flutter/pubspec.yaml#L19) |
+| **Version Code** | `280` | [`maskerv_flutter/pubspec.yaml`](file:///o:/PaperKit/maskerv_flutter/pubspec.yaml#L19) |
 | **Target SDK** | Android 14 / 15 (API Level 34/35) | [`maskerv_flutter/android/app/build.gradle`](file:///o:/PaperKit/maskerv_flutter/android/app/build.gradle) |
 | **Min SDK** | Android 8.0 (API Level 26) | [`maskerv_flutter/android/app/build.gradle`](file:///o:/PaperKit/maskerv_flutter/android/app/build.gradle) |
 | **Primary Category** | Productivity / Tools | [`docs/google_playstore_app_registration.md`](file:///o:/PaperKit/docs/google_playstore_app_registration.md#L19) |
@@ -258,11 +258,11 @@ In-App "Clear Storage & Session Data" Button / Auto-Purge (15 mins)
 | :--- | :--- | :--- | :--- | :--- |
 | `INTERNET` | Normal | None | Backend FastAPI connectivity for AI & file processing | Standard |
 | `ACCESS_NETWORK_STATE` | Normal | None | Offline status check for client-side WASM processing | Standard |
-| `READ_MEDIA_IMAGES` | Dangerous | None (API 33+) | Picking image files for scanner, OCR, & conversion | Granular Media |
-| `READ_MEDIA_VIDEO` | Dangerous | None (API 33+) | Selecting video files for compressor & frame extraction | Granular Media |
-| `READ_MEDIA_AUDIO` | Dangerous | None (API 33+) | Selecting audio files for converter & podcast tools | Granular Media |
-| `READ_EXTERNAL_STORAGE` | Dangerous | 32 | Legacy storage access for document loading | Storage Permission |
-| `WRITE_EXTERNAL_STORAGE` | Dangerous | 32 | Legacy storage export for generated PDFs/archives | Storage Permission |
+| `READ_MEDIA_IMAGES` | Removed (`tools:node="remove"`) | N/A | **REMOVED** - Uses system Android Photo Picker (zero permission needed) | Complies with Play Photo Picker policy |
+| `READ_MEDIA_VIDEO` | Removed (`tools:node="remove"`) | N/A | **REMOVED** - Uses system file picker (SAF) | Complies with Play Photo Picker policy |
+| `READ_MEDIA_AUDIO` | Removed (`tools:node="remove"`) | N/A | **REMOVED** - Uses system file picker (SAF) | Complies with Play Photo Picker policy |
+| `READ_EXTERNAL_STORAGE` | Dangerous | 32 | Legacy storage access for document loading (API <= 32 only) | Storage Permission (Legacy) |
+| `WRITE_EXTERNAL_STORAGE` | Dangerous | 32 | Legacy storage export for generated PDFs/archives (API <= 32 only) | Storage Permission (Legacy) |
 | `CAMERA` | Dangerous | None | Live camera document scanning & QR code reading | Camera Permission |
 
 ---
@@ -329,14 +329,14 @@ FastAPI Backend Proxy (Services/routers/ai.py)
 
 | Permission | Used in App? | Feature / Purpose | Sensitive Category | Source Evidence |
 | :--- | :---: | :--- | :---: | :--- |
-| `INTERNET` | Yes | API communication with backend | No | `AndroidManifest.xml:L2` |
-| `ACCESS_NETWORK_STATE` | Yes | Network status check | No | `AndroidManifest.xml:L3` |
-| `READ_MEDIA_IMAGES` | Yes | Pick images for OCR & scanner | Yes | `AndroidManifest.xml:L6` |
-| `READ_MEDIA_VIDEO` | Yes | Select videos for compressor | Yes | `AndroidManifest.xml:L7` |
-| `READ_MEDIA_AUDIO` | Yes | Select audio for converter | Yes | `AndroidManifest.xml:L8` |
-| `READ_EXTERNAL_STORAGE` | Yes | Legacy Android storage pick | Yes | `AndroidManifest.xml:L4` |
-| `WRITE_EXTERNAL_STORAGE` | Yes | Legacy Android document save | Yes | `AndroidManifest.xml:L5` |
-| `CAMERA` | Yes | Document scanner & QR reader | Yes | `AndroidManifest.xml:L9` |
+| `INTERNET` | Yes | API communication with backend | No | `AndroidManifest.xml:L3` |
+| `ACCESS_NETWORK_STATE` | Yes | Network status check | No | `AndroidManifest.xml:L4` |
+| `READ_MEDIA_IMAGES` | **NO (Removed)** | Stripped via `tools:node="remove"`; uses Android Photo Picker | N/A | `AndroidManifest.xml:L11` |
+| `READ_MEDIA_VIDEO` | **NO (Removed)** | Stripped via `tools:node="remove"`; uses system file picker (SAF) | N/A | `AndroidManifest.xml:L12` |
+| `READ_MEDIA_AUDIO` | **NO (Removed)** | Stripped via `tools:node="remove"`; uses system file picker (SAF) | N/A | `AndroidManifest.xml:L13` |
+| `READ_EXTERNAL_STORAGE` | Yes (maxSdkVersion 32) | Legacy Android storage pick | Yes | `AndroidManifest.xml:L7` |
+| `WRITE_EXTERNAL_STORAGE` | Yes (maxSdkVersion 32) | Legacy Android document save | Yes | `AndroidManifest.xml:L8` |
+| `CAMERA` | Yes | Document scanner & QR reader | Yes | `AndroidManifest.xml:L14` |
 
 ---
 
